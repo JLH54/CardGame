@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d0f484429837794db4a1531d1dfef5e, type: 3}
+  m_Name: Kevin
+  m_EditorClassIdentifier: 
+  icon: {fileID: -392639539, guid: 0fd3813612902fe409beda2770bd01c5, type: 3}
+  startingDeck:
+  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
+  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
+  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
+  - {fileID: 11400000, guid: f8021f086b953e44bba973894f638bc6, type: 2}
+  - {fileID: 11400000, guid: f8021f086b953e44bba973894f638bc6, type: 2}
+  - {fileID: 11400000, guid: f8021f086b953e44bba973894f638bc6, type: 2}
+  - {fileID: 11400000, guid: 4f8ab7a2a2b2ab7419790ac16d1b1893, type: 2}
+  - {fileID: 11400000, guid: 051ff98b8810cc148a56830a14bd82bd, type: 2}
+  - {fileID: 11400000, guid: 051ff98b8810cc148a56830a14bd82bd, type: 2}
+  - {fileID: 11400000, guid: 60d1863c6b60c0448aa9eaf9778fd429, type: 2}
+  MaxMoves: 3
+  maxHealth: 45
