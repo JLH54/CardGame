@@ -11,7 +11,6 @@ public class CardScriptable : ScriptableObject
     public bool isUpgraded;
 
     public bool isMultiTarget;
-
     //Description de ce qu'elle fait
     public CardDescription description;
     //Son cout pour les actions

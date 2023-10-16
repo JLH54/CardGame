@@ -17,7 +17,6 @@ public class Card : MonoBehaviour
 
     public TMP_Text nameText;
     public TMP_Text descriptionText;
-    public TMP_Text loreText;
 
     public Image art;
 

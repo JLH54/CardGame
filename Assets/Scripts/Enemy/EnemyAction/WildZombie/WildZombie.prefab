@@ -60,7 +60,7 @@ Transform:
   m_GameObject: {fileID: 798191166081847581}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -1.603, y: 0, z: 1.84}
+  m_LocalPosition: {x: -1.067, y: 0, z: 1.84}
   m_LocalScale: {x: 0.17, y: 0.14, z: 0.8000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -418,7 +418,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.627, y: 0.052}
+  m_AnchoredPosition: {x: -2.132, y: 0.052}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &8254256526524688128
@@ -729,6 +729,9 @@ MonoBehaviour:
   maxHealth: 0
   currentArmor: 0
   healthBar: {fileID: 8759437605235255882}
+  isDead: 0
+  position: 0
+  positionInWorld: {x: 0, y: 0, z: 0}
 --- !u!1 &7118625684212557947
 GameObject:
   m_ObjectHideFlags: 0
