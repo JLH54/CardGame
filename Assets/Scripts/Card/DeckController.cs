@@ -55,8 +55,8 @@ public class DeckController : MonoBehaviour
         }
 
         GameObject newCardGO = Instantiate(cardToSpawn, transform.position, transform.rotation);
-        ICardEffect cardEffect = newCardGO.AddComponent<ICardEffect>();
-        cardEffect = activeCards[0].effect;
+        ICardEffect cardEffect =newCardGO.AddComponent<ICardEffect>();
+        cardEffect.theEffect = activeCards[0].effect;
         Card newCard = newCardGO.GetComponent<Card>();
         newCard.cardSO = activeCards[0].card;
         newCard.SetUpCard();

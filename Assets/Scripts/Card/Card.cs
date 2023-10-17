@@ -46,6 +46,7 @@ public class Card : MonoBehaviour
 
     public LayerMask whatIsDesktop;
     public LayerMask whatIsEnemi;
+    public LayerMask whatIsSelf;
 
     private bool justPressed = false;
 
@@ -131,7 +132,7 @@ public class Card : MonoBehaviour
                         {
                             //make it first
                             enemis.Add(hit.collider.gameObject);
-                            foreach (GameObject obj in BattleController.instance.enemis)
+                            foreach (GameObject obj in BattleController.instance.enemiesGO)
                             {
                                 if (obj == hit.collider.gameObject) continue;
                                 enemis.Add(obj);
@@ -141,7 +142,29 @@ public class Card : MonoBehaviour
                         {
                             enemis.Add(hit.collider.gameObject);
                         }
-                        effect.ApplyEffect(enemis, cardSO);
+                        effect.theEffect.ApplyEffect(enemis, cardSO);
+                        Quaternion newRotation = Quaternion.Euler(0, 0, 180);
+                        MoveToPoint(BattleController.instance.discardPile.position, newRotation);
+                        BattleController.instance.CheckGameCondition();
+                        Destroy(gameObject, 5f);
+                    }
+                    else
+                    {
+                        ReturnToHand();
+
+                        UIController.instance.ShowMoveWarning();
+                    }
+                }
+                else if (Physics.Raycast(ray, out hit, 100f, whatIsSelf) && cardSO.target == CardScriptable.cardTarget.self)
+                {
+                    if (BattleController.instance.playerMoves >= moveCost)
+                    {
+                        inHand = false;
+                        isSelected = false;
+                        theHC.RemoveCardFromHand(this);
+                        BattleController.instance.SpendPlayerMoves(moveCost);
+                        List<GameObject> placeholder = new List<GameObject>();
+                        effect.theEffect.ApplyEffect(placeholder, cardSO);
                         Quaternion newRotation = Quaternion.Euler(0, 0, 180);
                         MoveToPoint(BattleController.instance.discardPile.position, newRotation);
                         BattleController.instance.CheckGameCondition();

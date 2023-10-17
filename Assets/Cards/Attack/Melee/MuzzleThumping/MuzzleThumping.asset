@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab12a9a742ee38e4084fa6ca2f79b7e2, type: 3}
   m_Name: MuzzleThumping
   m_EditorClassIdentifier: 
-  Cardname: 
+  Cardname: Muzzle Thumping
   isUpgraded: 0
   damage:
     baseCard: 6

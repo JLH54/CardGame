@@ -15,8 +15,8 @@ MonoBehaviour:
   Cardname: Buckshot
   isUpgraded: 0
   damage:
-    baseCard: 0
-    upgradedCard: 0
+    baseCard: 8
+    upgradedCard: 12
   isMultiTarget: 0
   description:
     baseCard: Deals 8 damage to a target

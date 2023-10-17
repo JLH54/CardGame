@@ -15,9 +15,9 @@ MonoBehaviour:
   Cardname: Birdshot
   isUpgraded: 0
   damage:
-    baseCard: 0
-    upgradedCard: 0
-  isMultiTarget: 0
+    baseCard: 4
+    upgradedCard: 6
+  isMultiTarget: 1
   description:
     baseCard: Deals 4 damage to all enemies
     upgradedCard: Deals 6 damage to all enemies

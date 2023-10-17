@@ -6,6 +6,7 @@ public class Reload : ICardEffect
 {
     public override void ApplyEffect(List<GameObject> targets, CardScriptable card)
     {
-
+        Player.instance.animator.SetTrigger("Reload");
+        BattleController.instance.AddPlayerMove(1);
     }
 }

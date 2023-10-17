@@ -21,7 +21,9 @@ public class BattleController : MonoBehaviour
 
     public Transform discardPile;
 
-    public GameObject[] enemis;
+    public GameObject[] enemiesGO;
+
+    public Enemy[] enemies;
 
     public float timeToWaitBetweenAttacks = 2f;
 
@@ -43,7 +45,8 @@ public class BattleController : MonoBehaviour
     {
         AddPlayerMove(maxMoves);
         DeckController.instance.DrawMultipleCards(startingCardsAmount);
-        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        enemiesGO = GameObject.FindGameObjectsWithTag("Enemy");
+        enemies = FindObjectsOfType<Enemy>();
         foreach (Enemy enemy in enemies)
         {
             enemy.SetAttack();

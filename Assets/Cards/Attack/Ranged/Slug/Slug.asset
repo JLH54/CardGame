@@ -15,9 +15,9 @@ MonoBehaviour:
   Cardname: Slug
   isUpgraded: 0
   damage:
-    baseCard: 0
-    upgradedCard: 0
-  isMultiTarget: 0
+    baseCard: 7
+    upgradedCard: 9
+  isMultiTarget: 1
   description:
     baseCard: Deals 7 damage to a target and behind that target
     upgradedCard: Deals 9 damage to a target and behind that target

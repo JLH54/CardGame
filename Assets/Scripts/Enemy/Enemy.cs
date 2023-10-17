@@ -49,7 +49,8 @@ public class Enemy : MonoBehaviour
             isDead = true;
             currentHealth = 0;
         }
-        if(currentHealth == 0)
+        animator.SetInteger("Health", currentHealth);
+        if (currentHealth == 0)
         {
             BattleController.instance.goldEarned += goldDrop;
             BattleController.instance.enemiesDead++;
@@ -115,7 +116,7 @@ public class Enemy : MonoBehaviour
         if (action == null) SetAttack();
         List<GameObject> targets = new List<GameObject>();
         targets.Add(gameObject);
-        foreach (GameObject obj in BattleController.instance.enemis)
+        foreach (GameObject obj in BattleController.instance.enemiesGO)
         {
             if (obj == this) continue;
             targets.Add(obj);
