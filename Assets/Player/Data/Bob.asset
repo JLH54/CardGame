@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: -318620188, guid: dfdff7eedcecb8f45a31ba8effad455b, type: 3}
   startingDeck:
-  - {fileID: 11400000, guid: 9686b976471cfab49bc044a268c3d2d4, type: 2}
-  - {fileID: 11400000, guid: 9686b976471cfab49bc044a268c3d2d4, type: 2}
-  - {fileID: 11400000, guid: 9686b976471cfab49bc044a268c3d2d4, type: 2}
-  - {fileID: 11400000, guid: a906fa97129971443ba5e50bea3ac6c5, type: 2}
-  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
-  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
-  - {fileID: 11400000, guid: 8834a261d5b36d04fb34665e5cf30636, type: 2}
-  - {fileID: 11400000, guid: 94a4188fef0b390499f1f6eeeb1c253e, type: 2}
-  - {fileID: 11400000, guid: abaadb7b1a97b0c4e9b1ad5848256405, type: 2}
-  - {fileID: 11400000, guid: f8021f086b953e44bba973894f638bc6, type: 2}
+  - {fileID: 11400000, guid: a29d2ad4691ab4f4aae796ed3e06baa3, type: 2}
+  - {fileID: 11400000, guid: a29d2ad4691ab4f4aae796ed3e06baa3, type: 2}
+  - {fileID: 11400000, guid: 83352aefea0b6464a882561ee2977dc2, type: 2}
+  - {fileID: 11400000, guid: 83352aefea0b6464a882561ee2977dc2, type: 2}
+  - {fileID: 11400000, guid: a598a07be23d44043b071507d5afb961, type: 2}
+  - {fileID: 11400000, guid: a598a07be23d44043b071507d5afb961, type: 2}
+  - {fileID: 11400000, guid: b0334cee19da5b04eb527b51bb774d14, type: 2}
+  - {fileID: 11400000, guid: 2125e28433b3dd043a4a37263cf49df3, type: 2}
+  - {fileID: 11400000, guid: 39a1b2b56617596409b2443a4df50dd2, type: 2}
+  - {fileID: 11400000, guid: 39a1b2b56617596409b2443a4df50dd2, type: 2}
   MaxMoves: 2
   maxHealth: 60

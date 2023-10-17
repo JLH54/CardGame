@@ -15,8 +15,8 @@ MonoBehaviour:
   Cardname: Test2
   isUpgraded: 0
   damage:
-    baseCard: 5
-    upgradedCard: 5
+    baseCard: 0
+    upgradedCard: 0
   isMultiTarget: 0
   description:
     baseCard: Hello nick
@@ -25,5 +25,5 @@ MonoBehaviour:
     baseCard: 1
     upgradedCard: 0
   Icon: {fileID: 21300000, guid: 566e25bcf693f7443b81dc7fe1e83a11, type: 3}
-  type: 0
+  type: 1
   target: 1

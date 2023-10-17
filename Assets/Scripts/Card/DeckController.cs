@@ -6,22 +6,15 @@ public class DeckController : MonoBehaviour
 {
     public static DeckController instance;
 
-    public List<cardWithEffect> deck = new List<cardWithEffect>();
+    //public List<cardWithEffect> deck = new List<cardWithEffect>();
 
-    private List<cardWithEffect> activeCards = new List<cardWithEffect>();
+    private List<Character.cardWithEffect> activeCards = new List<Character.cardWithEffect>();
 
     private List<GameObject> cardsInHand = new List<GameObject>();
 
     public GameObject cardToSpawn;
 
     public float waitBetweenDrawingCards = 0.25f;
-
-    [System.Serializable]
-    public struct cardWithEffect
-    {
-        public CardScriptable card;
-        public ICardEffect effect;
-    }
 
     private void Awake()
     {
@@ -44,8 +37,8 @@ public class DeckController : MonoBehaviour
     {
         activeCards.Clear();
 
-        List<cardWithEffect> tempDeck = new List<cardWithEffect>();
-        tempDeck.AddRange(deck);
+        List<Character.cardWithEffect> tempDeck = new List<Character.cardWithEffect>();
+        tempDeck.AddRange(Player.instance.thisPlayer.startingDeck);
         while(tempDeck.Count > 0)
         {
             int selected = Random.Range(0, tempDeck.Count);

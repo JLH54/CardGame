@@ -24,7 +24,8 @@ public class Card : MonoBehaviour
     public GameObject atkIconGO;
     public GameObject costIconGO;
 
-    public SpriteRenderer art;
+    public Canvas canvasOfArt;
+    public Image art;
     public SpriteRenderer cardModel;
     public SpriteRenderer atkIcon;
     public SpriteRenderer costIcon;
@@ -71,18 +72,23 @@ public class Card : MonoBehaviour
         }
         else if( cardSO.type == CardScriptable.cardType.skill)
         {
-            atkIconGO.SetActive(false);
-            attackText.text = "";
+            if(cardSO.getDamage() < 1)
+            {
+                atkIconGO.SetActive(false);
+                attackText.text = "";
+            }
+            
         }
 
-        if(cardSO.getCost() > 1)
+        if(cardSO.getCost() < 1)
         {
             costIconGO.SetActive(false);
             costText.text = "";
-        }  
-
-
-        costText.text = cardSO.getCost().ToString();
+        }
+        else
+        {
+            costText.text = cardSO.getCost().ToString();
+        }
 
         nameText.text = cardSO.name;
         descriptionText.text = cardSO.getDescription();
@@ -193,7 +199,7 @@ public class Card : MonoBehaviour
             atkIcon.sortingLayerName = "CardSelectedIcons";
             costIcon.sortingLayerName = "CardSelectedIcons";
             cardModel.sortingLayerName = "CardSelected";
-            art.sortingLayerName = "CardSelectedInfo";
+            canvasOfArt.sortingLayerName = "CardSelectedInfo";
 
             attackTextGO.GetComponent<PushToFront>().SetLayer("CardSelectedInfo");
             costTextGO.GetComponent<PushToFront>().SetLayer("CardSelectedInfo");
@@ -210,6 +216,7 @@ public class Card : MonoBehaviour
         atkIcon.sortingLayerName = "Icons";
         costIcon.sortingLayerName = "Icons";
         cardModel.sortingLayerName = "CardModel";
+        canvasOfArt.sortingLayerName = "CardInfo";
 
         attackTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");
         costTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");

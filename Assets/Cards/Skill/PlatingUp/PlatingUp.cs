@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatingUp : MonoBehaviour
+public class PlatingUp : ICardEffect
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void ApplyEffect(List<GameObject> targets, CardScriptable card)
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

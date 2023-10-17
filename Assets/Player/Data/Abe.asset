@@ -14,15 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 4723107735738678597, guid: a26e1f98234ad8a4d9fb038a7255fa65, type: 3}
   startingDeck:
-  - {fileID: 11400000, guid: 350a7dec81d75e549af9e4d072811470, type: 2}
-  - {fileID: 11400000, guid: 350a7dec81d75e549af9e4d072811470, type: 2}
-  - {fileID: 11400000, guid: 051ff98b8810cc148a56830a14bd82bd, type: 2}
-  - {fileID: 11400000, guid: 051ff98b8810cc148a56830a14bd82bd, type: 2}
-  - {fileID: 11400000, guid: 384c7ea34d63175468d0a6b115602484, type: 2}
-  - {fileID: 11400000, guid: 384c7ea34d63175468d0a6b115602484, type: 2}
-  - {fileID: 11400000, guid: f7ae22a8432b01941ae68064fb47fc6a, type: 2}
-  - {fileID: 11400000, guid: 1606354d6c1cf1440970f3b1effa73d3, type: 2}
-  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
-  - {fileID: 11400000, guid: 7ef2cb18739b4d34b9b0b9540f7cc210, type: 2}
+  - card: {fileID: 11400000, guid: a29d2ad4691ab4f4aae796ed3e06baa3, type: 2}
+    effect: {fileID: 8960132444267822733, guid: 9d1534f6b2510f54a82abaad29c8ee17, type: 3}
+  - card: {fileID: 11400000, guid: a29d2ad4691ab4f4aae796ed3e06baa3, type: 2}
+    effect: {fileID: 8960132444267822733, guid: 9d1534f6b2510f54a82abaad29c8ee17, type: 3}
+  - card: {fileID: 11400000, guid: a598a07be23d44043b071507d5afb961, type: 2}
+    effect: {fileID: 3758019030707026580, guid: 639781c6ba632834d81eee3fdc9ba326, type: 3}
+  - card: {fileID: 11400000, guid: a598a07be23d44043b071507d5afb961, type: 2}
+    effect: {fileID: 3758019030707026580, guid: 639781c6ba632834d81eee3fdc9ba326, type: 3}
+  - card: {fileID: 11400000, guid: b0334cee19da5b04eb527b51bb774d14, type: 2}
+    effect: {fileID: 5406523695859537632, guid: f00325108fb244242b8060c2affac949, type: 3}
+  - card: {fileID: 11400000, guid: 2125e28433b3dd043a4a37263cf49df3, type: 2}
+    effect: {fileID: 2297029644896618062, guid: f2c40834108c2e1479e5a02fe366e4be, type: 3}
+  - card: {fileID: 11400000, guid: 83352aefea0b6464a882561ee2977dc2, type: 2}
+    effect: {fileID: 6287684116875020949, guid: f942025475c1490488b2f0d1fcc25580, type: 3}
+  - card: {fileID: 11400000, guid: 83352aefea0b6464a882561ee2977dc2, type: 2}
+    effect: {fileID: 6287684116875020949, guid: f942025475c1490488b2f0d1fcc25580, type: 3}
+  - card: {fileID: 11400000, guid: 39a1b2b56617596409b2443a4df50dd2, type: 2}
+    effect: {fileID: 1659974995261676163, guid: 3efaeac080fb63e4991d376400070d7d, type: 3}
+  - card: {fileID: 11400000, guid: 39a1b2b56617596409b2443a4df50dd2, type: 2}
+    effect: {fileID: 1659974995261676163, guid: 3efaeac080fb63e4991d376400070d7d, type: 3}
   MaxMoves: 3
   maxHealth: 50
