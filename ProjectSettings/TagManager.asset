@@ -42,3 +42,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: CardModel
+    uniqueID: 374562029
+    locked: 0
+  - name: Icons
+    uniqueID: 2395660719
+    locked: 0
+  - name: CardInfo
+    uniqueID: 2123958805
+    locked: 0
+  - name: CardSelected
+    uniqueID: 1880778021
+    locked: 0
+  - name: CardSelectedIcons
+    uniqueID: 2967529041
+    locked: 0
+  - name: CardSelectedInfo
+    uniqueID: 2284597827
+    locked: 0

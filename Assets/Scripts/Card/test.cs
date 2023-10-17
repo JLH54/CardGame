@@ -8,6 +8,6 @@ public class test : ICardEffect
     {
         Player.instance.animator.SetTrigger("Attack1");
         targets[0].GetComponent<Enemy>().playAnimation("Hurt");
-        targets[0].GetComponent<Enemy>().TakeDamage(50);
+        targets[0].GetComponent<Enemy>().TakeDamage(card.getDamage());
     }
 }

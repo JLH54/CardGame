@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour
     public int maxHealth;
     public int currentArmor = 0;
     public Slider healthBar;
+    public TMP_Text healthText;
 
     private void Awake()
     {
@@ -42,5 +44,6 @@ public class Player : MonoBehaviour
     public void UpdateHealth()
     {
         healthBar.value = (float)currentHealth / (float)maxHealth;
+        healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
     }
 }

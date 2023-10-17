@@ -14,11 +14,20 @@ public class Card : MonoBehaviour
 
     public TMP_Text attackText;
     public TMP_Text costText;
-
     public TMP_Text nameText;
     public TMP_Text descriptionText;
 
-    public Image art;
+    public GameObject attackTextGO;
+    public GameObject costTextGO;
+    public GameObject nameTextGO;
+    public GameObject descriptionTextGO;
+    public GameObject atkIconGO;
+    public GameObject costIconGO;
+
+    public SpriteRenderer art;
+    public SpriteRenderer cardModel;
+    public SpriteRenderer atkIcon;
+    public SpriteRenderer costIcon;
 
     public float moveSpeed = 5f;
     public float rotateSpeed = 540f;
@@ -57,12 +66,20 @@ public class Card : MonoBehaviour
         
         if(cardSO.type == CardScriptable.cardType.Attack)
         {
-            //attackText.text = cardSO.getEffect();
+            int damage = cardSO.getDamage();
+            attackText.text = damage.ToString();
         }
         else if( cardSO.type == CardScriptable.cardType.skill)
         {
+            atkIconGO.SetActive(false);
             attackText.text = "";
         }
+
+        if(cardSO.getCost() > 1)
+        {
+            costIconGO.SetActive(false);
+            costText.text = "";
+        }  
 
 
         costText.text = cardSO.getCost().ToString();
@@ -172,6 +189,16 @@ public class Card : MonoBehaviour
             theCol.enabled = false;
 
             justPressed = true;
+
+            atkIcon.sortingLayerName = "CardSelectedIcons";
+            costIcon.sortingLayerName = "CardSelectedIcons";
+            cardModel.sortingLayerName = "CardSelected";
+            art.sortingLayerName = "CardSelectedInfo";
+
+            attackTextGO.GetComponent<PushToFront>().SetLayer("CardSelectedInfo");
+            costTextGO.GetComponent<PushToFront>().SetLayer("CardSelectedInfo");
+            nameTextGO.GetComponent<PushToFront>().SetLayer("CardSelectedInfo");
+            descriptionTextGO.GetComponent<PushToFront>().SetLayer("CardSelectedInfo");
         }
     }
 
@@ -179,6 +206,15 @@ public class Card : MonoBehaviour
     {
         isSelected = false;
         theCol.enabled = true;
+
+        atkIcon.sortingLayerName = "Icons";
+        costIcon.sortingLayerName = "Icons";
+        cardModel.sortingLayerName = "CardModel";
+
+        attackTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");
+        costTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");
+        nameTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");
+        descriptionTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");
 
         MoveToPoint(theHC.cardPositions[handPosition], theHC.minPos.rotation);
     }

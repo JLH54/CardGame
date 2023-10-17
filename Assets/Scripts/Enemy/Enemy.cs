@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     public Sprite[] ActionIcon;
     public SpriteRenderer Icon;
     public TMP_Text dmgAmount;
+    public TMP_Text healthText;
 
     public int goldDrop;
     public Animator animator;
@@ -52,7 +53,7 @@ public class Enemy : MonoBehaviour
         {
             BattleController.instance.goldEarned += goldDrop;
             BattleController.instance.enemiesDead++;
-            Destroy(parent);
+            Destroy(parent, 2f);
         }
         updateHealth();
     }
@@ -106,6 +107,7 @@ public class Enemy : MonoBehaviour
     public void updateHealth()
     {
         healthBar.value = (float)currentHealth / (float)maxHealth;
+        healthText.text = currentHealth.ToString() + "/" + maxHealth.ToString();
     }
 
     public void Attack()

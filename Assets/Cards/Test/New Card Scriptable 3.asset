@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab12a9a742ee38e4084fa6ca2f79b7e2, type: 3}
   m_Name: New Card Scriptable 3
   m_EditorClassIdentifier: 
-  Cardname: 
+  Cardname: Test card #3
   isUpgraded: 0
+  damage:
+    baseCard: 5
+    upgradedCard: 5
+  isMultiTarget: 0
   description:
     baseCard: This is the first test card
     upgradedCard: 
   cost:
     baseCard: 1
-    upgradedCard: 0
-  effect:
-    baseCard: 0
     upgradedCard: 0
   Icon: {fileID: 21300000, guid: 566e25bcf693f7443b81dc7fe1e83a11, type: 3}
   type: 0

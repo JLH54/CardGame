@@ -10,6 +10,8 @@ public class CardScriptable : ScriptableObject
     //est-elle ameliorer
     public bool isUpgraded;
 
+    public CardDamage damage;
+
     public bool isMultiTarget;
     //Description de ce qu'elle fait
     public CardDescription description;
@@ -33,6 +35,11 @@ public class CardScriptable : ScriptableObject
     {
         return isUpgraded ? description.upgradedCard : description.baseCard;
     }
+
+    public int getDamage()
+    {
+        return isUpgraded ? damage.upgradedCard : damage.baseCard;
+    }
 }
 
 [System.Serializable]
@@ -44,6 +51,13 @@ public struct CardDescription
 
 [System.Serializable]
 public struct CardCost
+{
+    public int baseCard;
+    public int upgradedCard;
+}
+
+[System.Serializable]
+public struct CardDamage
 {
     public int baseCard;
     public int upgradedCard;
