@@ -20,9 +20,15 @@ MonoBehaviour:
   - attack: Frenzied claw
     isAttack: 1
     weight: 50
+    minAttack: 3
+    maxAttack: 6
   - attack: Rotten spew
     isAttack: 1
     weight: 15
+    minAttack: 4
+    maxAttack: 7
   - attack: Ambush
     isAttack: 1
     weight: 35
+    minAttack: 5
+    maxAttack: 8

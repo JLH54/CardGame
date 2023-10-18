@@ -49,6 +49,7 @@ public class Card : MonoBehaviour
     public LayerMask whatIsSelf;
 
     private bool justPressed = false;
+    public float timeToWaitForCardToGoDiscard = 0.5f;
 
 
     // Start is called before the first frame update
@@ -142,10 +143,9 @@ public class Card : MonoBehaviour
                         {
                             enemis.Add(hit.collider.gameObject);
                         }
-                        effect.theEffect.ApplyEffect(enemis, cardSO);
+                        StartCoroutine(PlayCardCo(enemis, cardSO));
                         Quaternion newRotation = Quaternion.Euler(0, 0, 180);
                         MoveToPoint(BattleController.instance.discardPile.position, newRotation);
-                        BattleController.instance.CheckGameCondition();
                         Destroy(gameObject, 5f);
                     }
                     else
@@ -164,10 +164,9 @@ public class Card : MonoBehaviour
                         theHC.RemoveCardFromHand(this);
                         BattleController.instance.SpendPlayerMoves(moveCost);
                         List<GameObject> placeholder = new List<GameObject>();
-                        effect.theEffect.ApplyEffect(placeholder, cardSO);
+                        StartCoroutine(PlayCardCo(placeholder, cardSO));
                         Quaternion newRotation = Quaternion.Euler(0, 0, 180);
                         MoveToPoint(BattleController.instance.discardPile.position, newRotation);
-                        BattleController.instance.CheckGameCondition();
                         Destroy(gameObject, 5f);
                     }
                     else
@@ -247,5 +246,12 @@ public class Card : MonoBehaviour
         descriptionTextGO.GetComponent<PushToFront>().SetLayer("CardInfo");
 
         MoveToPoint(theHC.cardPositions[handPosition], theHC.minPos.rotation);
+    }
+
+    private IEnumerator PlayCardCo(List<GameObject> enemis,CardScriptable cardSO)
+    {
+        yield return new WaitForSeconds(timeToWaitForCardToGoDiscard);
+
+        effect.theEffect.ApplyEffect(enemis, cardSO);
     }
 }

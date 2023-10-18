@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
     public int position;
 
     public Vector3 positionInWorld;
+    public float timeItTakesToDie= 3f;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +44,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        animator.SetTrigger("Hurt");
         currentHealth -= damage;
         if(currentHealth < 0)
         {
@@ -54,7 +56,8 @@ public class Enemy : MonoBehaviour
         {
             BattleController.instance.goldEarned += goldDrop;
             BattleController.instance.enemiesDead++;
-            Destroy(parent, 2f);
+            BattleController.instance.CheckGameCondition();
+            Destroy(parent, timeItTakesToDie);
         }
         updateHealth();
     }
@@ -88,7 +91,7 @@ public class Enemy : MonoBehaviour
             {
                 if (thisEnemy.attacks[i].isAttack)
                 {
-                    damage = Random.Range(7,11);
+                    damage = Random.Range(thisEnemy.attacks[i].minAttack, thisEnemy.attacks[i].maxAttack);
                     Icon.sprite = ActionIcon[i];
                     dmgAmount.text = damage.ToString();
                 }

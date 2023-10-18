@@ -20,5 +20,6 @@ public class EnemyScriptable : ScriptableObject
         public string attack;
         public bool isAttack;
         public int weight;
+        public int minAttack, maxAttack;
     }
 }

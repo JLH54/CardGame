@@ -117,7 +117,6 @@ public class BattleController : MonoBehaviour
 
     public void CheckGameCondition()
     {
-        Enemy[] enemies = FindObjectsOfType<Enemy>();
         if (Player.instance.currentHealth == 0)
         {
             UIController.instance.gameObject.SetActive(false);
