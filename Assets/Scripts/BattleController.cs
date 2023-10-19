@@ -106,13 +106,12 @@ public class BattleController : MonoBehaviour
 
     IEnumerator EnemyTurnCo()
     {
-        Enemy[] enemies = FindObjectsOfType<Enemy>();
         foreach (Enemy enemy in enemies)
         {
+            if (!enemy) continue;
             enemy.Attack();
             yield return new WaitForSeconds(timeToWaitBetweenAttacks);
         }
-
     }
 
     public void CheckGameCondition()

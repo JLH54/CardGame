@@ -6,6 +6,8 @@ public class RottenSpew : EnemyAction
 {
     public override void ApplyAction(List<GameObject> targets)
     {
+        targets[0].GetComponent<Enemy>().playAnimation("Attack3");
+        AudioManager.Instance.PlaySound2D(SoundType.WildZombieAttack1);
         Player.instance.TakeDamage(targets[0].GetComponent<Enemy>().damage);
     }
 }

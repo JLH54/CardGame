@@ -36,27 +36,30 @@ public class Player : MonoBehaviour
     }
 
     public void TakeDamage(int damage) {
-
         if(currentArmor > 1)
         {
             currentArmor -= damage;
-            if(currentArmor < 0)
+            if (currentArmor < 0)
             {
+                AudioManager.Instance.PlaySound2D(SoundType.PlayerArmorBreaking);
                 currentArmor = 0;
             }
             CheckForArmor();
             return;
         }
-        AudioManager.Instance.PlaySound2D(SoundType.PlayerHurt);
-        currentHealth -= damage;
-        if (currentHealth < 0)
+        else
         {
-            //Player dies
-            currentHealth = 0;
-            BattleController.instance.CheckGameCondition();
-            Destroy(gameObject);
+            AudioManager.Instance.PlaySound2D(SoundType.PlayerHurt);
+            currentHealth -= damage;
+            if (currentHealth < 0)
+            {
+                //Player dies
+                currentHealth = 0;
+                BattleController.instance.CheckGameCondition();
+                Destroy(gameObject);
+            }
+            UpdateHealth();
         }
-        UpdateHealth();
     }
 
     public void UpdateHealth()
