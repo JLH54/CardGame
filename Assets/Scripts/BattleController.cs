@@ -71,11 +71,6 @@ public class BattleController : MonoBehaviour
         {
             case TurnOrder.player:
                 CheckGameCondition();
-                Enemy[] enemies = FindObjectsOfType<Enemy>();
-                foreach (Enemy enemy in enemies)
-                {
-                    enemy.SetAttack();
-                }
                 UIController.instance.endTurnButton.SetActive(true);
                 DeckController.instance.DrawMultipleCards(cardsToDrawPerTurn);
                 break;
@@ -108,9 +103,10 @@ public class BattleController : MonoBehaviour
     {
         foreach (Enemy enemy in enemies)
         {
+            yield return new WaitForSeconds(timeToWaitBetweenAttacks);
             if (!enemy) continue;
             enemy.Attack();
-            yield return new WaitForSeconds(timeToWaitBetweenAttacks);
+            enemy.SetAttack();
         }
     }
 

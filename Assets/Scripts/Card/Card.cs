@@ -263,7 +263,10 @@ public class Card : MonoBehaviour
     {
         for(int i =0; i < BattleController.instance.enemiesGO.Length;i++)
         {
-            if (!BattleController.instance.enemiesGO[i].GetComponent<Enemy>().isDead) return BattleController.instance.enemiesGO[i];
+            if(BattleController.instance.enemiesGO[i])
+            {
+                if (!BattleController.instance.enemiesGO[i].GetComponent<Enemy>().isDead) return BattleController.instance.enemiesGO[i];
+            }
         }
         return null;
     }
