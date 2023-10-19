@@ -13,6 +13,8 @@ public class CardScriptable : ScriptableObject
     public CardDamage damage;
 
     public bool isMultiTarget;
+
+    public bool isMelee;
     //Description de ce qu'elle fait
     public CardDescription description;
     //Son cout pour les actions

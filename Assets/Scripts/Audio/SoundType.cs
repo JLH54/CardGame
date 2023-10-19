@@ -9,8 +9,9 @@ public enum SoundType
     PlayerReload,
     PlayerHurt,
     PlayerArmorBreaking,
+    ArmorUp,
     ZombieHurt,
-    ZombieDie,
+    WildZombieDead,
     WildZombieAttack1,
     WildZombieAttack2,
     WildZombieAttack3

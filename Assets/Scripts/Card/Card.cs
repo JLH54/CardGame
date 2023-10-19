@@ -122,7 +122,11 @@ public class Card : MonoBehaviour
             {
                 if (Physics.Raycast(ray, out hit, 100f, whatIsEnemi) && cardSO.target == CardScriptable.cardTarget.ennemy)
                 {
-                    if(BattleController.instance.playerMoves >= moveCost)
+                    if(hit.collider.gameObject != GetClosestEnemy() && cardSO.isMelee)
+                    {
+                        ReturnToHand();
+                    }
+                    else if(BattleController.instance.playerMoves >= moveCost)
                     {
                         inHand = false;
                         isSelected = false;
@@ -253,5 +257,14 @@ public class Card : MonoBehaviour
         yield return new WaitForSeconds(timeToWaitForCardToGoDiscard);
 
         effect.theEffect.ApplyEffect(enemis, cardSO);
+    }
+
+    private GameObject GetClosestEnemy()
+    {
+        for(int i =0; i < BattleController.instance.enemiesGO.Length;i++)
+        {
+            if (!BattleController.instance.enemiesGO[i].GetComponent<Enemy>().isDead) return BattleController.instance.enemiesGO[i];
+        }
+        return null;
     }
 }

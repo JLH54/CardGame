@@ -54,6 +54,7 @@ public class Enemy : MonoBehaviour
         animator.SetInteger("Health", currentHealth);
         if (currentHealth == 0)
         {
+            AudioManager.Instance.PlaySound2D(SoundType.WildZombieDead);
             BattleController.instance.goldEarned += goldDrop;
             BattleController.instance.enemiesDead++;
             BattleController.instance.CheckGameCondition();
