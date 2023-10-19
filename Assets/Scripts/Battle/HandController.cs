@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//S'occupe de la main du joueur
 public class HandController : MonoBehaviour
 {
     public static HandController instance;
@@ -22,7 +22,7 @@ public class HandController : MonoBehaviour
     {
         SetCardPositionInHand();
     }
-
+    //Met la position de la carte dans la main
     public void SetCardPositionInHand()
     {
         cardPositions.Clear();
@@ -45,7 +45,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-
+    //Enleve la carte de la main
     public void RemoveCardFromHand(Card cardToRemove)
     {
         if(heldCards[cardToRemove.handPosition] == cardToRemove)
@@ -58,7 +58,7 @@ public class HandController : MonoBehaviour
         }
         SetCardPositionInHand();
     }
-
+    //Ajoute la carte a la main
     public void AddCardToHand(Card cardToAdd)
     {
         if(heldCards.Count >= 5)
@@ -68,7 +68,7 @@ public class HandController : MonoBehaviour
         heldCards.Add(cardToAdd);
         SetCardPositionInHand();
     }
-
+    //Vide la main
     public void EmptyHand()
     {
         foreach(Card heldCard in heldCards)

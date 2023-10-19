@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Pour avoir l'information des enemis
 [CreateAssetMenu]
 public class EnemyScriptable : ScriptableObject
 {

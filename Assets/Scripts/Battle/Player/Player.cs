@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+//Base pour les personnages pour le joueur
 public class Player : MonoBehaviour
 {
     public static Player instance;

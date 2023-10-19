@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+//Base pour le enemis
 public class Enemy : MonoBehaviour
 {
     public EnemyScriptable thisEnemy;
@@ -69,6 +69,7 @@ public class Enemy : MonoBehaviour
         Debug.Log(gameObject.name + " : " + thisEnemy.attacks[attack].attack);
     }
 
+    //Prend une de ces attaques dans le tableau de probabilite
     private int GetRandomAttack()
     {
         List<int> attackProbabilities = new List<int>();

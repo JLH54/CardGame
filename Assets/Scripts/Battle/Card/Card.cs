@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+//La carte qui est dans le jeu
 public class Card : MonoBehaviour
 {
     public CardScriptable cardSO;
@@ -51,8 +52,6 @@ public class Card : MonoBehaviour
     private bool justPressed = false;
     public float timeToWaitForCardToGoDiscard = 0.5f;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         SetUpCard();
@@ -63,6 +62,7 @@ public class Card : MonoBehaviour
         effect = GetComponent<ICardEffect>();
     }
 
+    //Met l'information qui vien du SO sur la carte
     public void SetUpCard()
     {
         moveCost = cardSO.getCost();
@@ -101,13 +101,16 @@ public class Card : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Va aller a l'information donner quand on la fait spawner pour qu'elle aye dans la main tout en fesant une rotation pour pas qu'ils ont l'air boguer
         transform.position = Vector3.Lerp(transform.position, targetPoint, moveSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotationPoint, rotateSpeed * Time.deltaTime);
 
+        //Si il est selectionner, on fait en sorte qu'il suis la souris
         if (isSelected)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+            //Le point qu'il va suivre
             RaycastHit hit;
             if(Physics.Raycast(ray,out hit, 100f, whatIsDesktop))
             {
@@ -118,24 +121,29 @@ public class Card : MonoBehaviour
             {
                 ReturnToHand();
             }
+            //Quand le joueur clique
             if (Input.GetMouseButtonDown(0) && justPressed == false)
             {
+                //Regard si c'est un enemi
                 if (Physics.Raycast(ray, out hit, 100f, whatIsEnemi) && cardSO.target == CardScriptable.cardTarget.ennemy)
                 {
+                    //Si la carte est un enemi et que ce n'est pas l'enemi le plus proche, revoie la carte dans la main
                     if(hit.collider.gameObject != GetClosestEnemy() && cardSO.isMelee)
                     {
                         ReturnToHand();
                     }
                     else if(BattleController.instance.playerMoves >= moveCost)
                     {
+                        //Si on peut jouer la carte on la joue
                         inHand = false;
                         isSelected = false;
                         theHC.RemoveCardFromHand(this);
                         BattleController.instance.SpendPlayerMoves(moveCost);
                         List<GameObject> enemis = new List<GameObject>();
+                        //Regarde si la carte peut attaquer plusieurs cible
                         if (cardSO.isMultiTarget)
                         {
-                            //make it first
+                            //Fait en sorte que l'enemi est premier dans la liste
                             enemis.Add(hit.collider.gameObject);
                             foreach (GameObject obj in BattleController.instance.enemiesGO)
                             {
@@ -145,8 +153,10 @@ public class Card : MonoBehaviour
                         }
                         else
                         {
+                            //Si c'est juste une cible, donne la cible
                             enemis.Add(hit.collider.gameObject);
                         }
+                        //Fait en sorte qu'on peut voir les animation
                         StartCoroutine(PlayCardCo(enemis, cardSO));
                         Quaternion newRotation = Quaternion.Euler(0, 0, 180);
                         MoveToPoint(BattleController.instance.discardPile.position, newRotation);
@@ -154,6 +164,7 @@ public class Card : MonoBehaviour
                     }
                     else
                     {
+                        //Si la carte coute trop chere, envoi un message disant au joueur qu'elle coute trop chere
                         ReturnToHand();
 
                         UIController.instance.ShowMoveWarning();
@@ -161,6 +172,7 @@ public class Card : MonoBehaviour
                 }
                 else if (Physics.Raycast(ray, out hit, 100f, whatIsSelf) && cardSO.target == CardScriptable.cardTarget.self)
                 {
+                    //Si c'est un skill qui cible le joueur
                     if (BattleController.instance.playerMoves >= moveCost)
                     {
                         inHand = false;
@@ -176,7 +188,6 @@ public class Card : MonoBehaviour
                     else
                     {
                         ReturnToHand();
-
                         UIController.instance.ShowMoveWarning();
                     }
                 }
@@ -190,21 +201,24 @@ public class Card : MonoBehaviour
         justPressed = false;
     }
 
+    //Bouge la carte a ces points(voir la fonction Update())
     public void MoveToPoint(Vector3 pointToMoveTo, Quaternion rotationToRotateTo)
     {
         targetPoint = pointToMoveTo;
         rotationPoint = rotationToRotateTo;
     }
 
-
+    //Quand le joueur regarde la carte
     private void OnMouseOver()
     {
+        //Le met plus vers l'avant que le joueur met le curseur par-dessus
         if (inHand)
         {
             MoveToPoint(theHC.cardPositions[handPosition] + new Vector3(0f, 1f, .5f), Quaternion.identity);
         }
     }
 
+    //Quand le joueur ne regarde pus la carte
     private void OnMouseExit()
     {
         if (inHand)
@@ -213,8 +227,10 @@ public class Card : MonoBehaviour
         }
     }
 
+    //Quand le joueur a cliquer sur la carte
     private void OnMouseDown()
     {
+        //Quand le joeur le selectionne
         if (inHand && BattleController.instance.currentPhase == BattleController.TurnOrder.player)
         {
             isSelected = true;
@@ -234,6 +250,7 @@ public class Card : MonoBehaviour
         }
     }
 
+    //Retourne la carte dans la main
     private void ReturnToHand()
     {
         isSelected = false;
@@ -252,6 +269,7 @@ public class Card : MonoBehaviour
         MoveToPoint(theHC.cardPositions[handPosition], theHC.minPos.rotation);
     }
 
+    //Coroutine pour faire sure de voir les animations
     private IEnumerator PlayCardCo(List<GameObject> enemis,CardScriptable cardSO)
     {
         yield return new WaitForSeconds(timeToWaitForCardToGoDiscard);
@@ -259,6 +277,7 @@ public class Card : MonoBehaviour
         effect.theEffect.ApplyEffect(enemis, cardSO);
     }
 
+    //Retourne l'enenmi le plus proche
     private GameObject GetClosestEnemy()
     {
         for(int i =0; i < BattleController.instance.enemiesGO.Length;i++)

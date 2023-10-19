@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//SO pour pouvoir creer une carte
 [CreateAssetMenu]
 public class CardScriptable : ScriptableObject
 {
@@ -9,11 +10,11 @@ public class CardScriptable : ScriptableObject
     public string Cardname;
     //est-elle ameliorer
     public bool isUpgraded;
-
+    //Le damage de la carte(meme si elle ne fait pas de damage faut quand meme l'avoir)
     public CardDamage damage;
-
+    //Si elle peut cibler plusieurs
     public bool isMultiTarget;
-
+    //Si elle est physique(par physique je veut dire qu'elle doit cibler la premier cible le plus proche)
     public bool isMelee;
     //Description de ce qu'elle fait
     public CardDescription description;

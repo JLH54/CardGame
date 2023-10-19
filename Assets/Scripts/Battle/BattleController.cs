@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+//Controle la bataille
 public class BattleController : MonoBehaviour
 {
     public static BattleController instance;
@@ -52,7 +53,7 @@ public class BattleController : MonoBehaviour
             enemy.SetAttack();
         }
     }
-
+    //Fait en sorte d'utiliser les points(move points) du joueur
     public void SpendPlayerMoves(int amountToSpend)
     {
         playerMoves = playerMoves - amountToSpend;
@@ -62,7 +63,7 @@ public class BattleController : MonoBehaviour
         }
         UIController.instance.SetPlayerMoveText(playerMoves);
     }
-
+    //Tout par tour
     public void AdvanceTurn()
     {
         currentPhase++;
@@ -82,13 +83,13 @@ public class BattleController : MonoBehaviour
                 break;
         }
     }
-
+    //Fini le tour du joueur(utiliser par le boutton)
     public void EndPlayerTurn()
     {
         UIController.instance.endTurnButton.SetActive(false);
         AdvanceTurn();
     }
-
+    //Ajoute des points au joueur
     public void AddPlayerMove(int amount)
     {
         playerMoves += amount;
@@ -98,7 +99,7 @@ public class BattleController : MonoBehaviour
         }
         UIController.instance.SetPlayerMoveText(playerMoves);
     }
-
+    //Les enemis font leur attaques un apres l'autres
     IEnumerator EnemyTurnCo()
     {
         foreach (Enemy enemy in enemies)
@@ -109,7 +110,7 @@ public class BattleController : MonoBehaviour
             enemy.SetAttack();
         }
     }
-
+    //Regarde la win/lose condition du jeu
     public void CheckGameCondition()
     {
         if (Player.instance.currentHealth == 0)

@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Ce qui va controller le paquet de carte du joueur
 public class DeckController : MonoBehaviour
 {
     public static DeckController instance;
-
-    //public List<cardWithEffect> deck = new List<cardWithEffect>();
 
     private List<Character.cardWithEffect> activeCards = new List<Character.cardWithEffect>();
 
@@ -27,12 +26,7 @@ public class DeckController : MonoBehaviour
         SetUpDeck();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    //Prend le deck qui est dans le SO du joueur
     public void SetUpDeck()
     {
         activeCards.Clear();
@@ -46,7 +40,7 @@ public class DeckController : MonoBehaviour
             tempDeck.RemoveAt(selected);
         }
     }
-
+    //Pige une carte et la met dans la main
     public void DrawCardToHand()
     {
         if(activeCards.Count <= 0)
@@ -67,11 +61,13 @@ public class DeckController : MonoBehaviour
         HandController.instance.AddCardToHand(newCard);
     }
 
+    //Pige plusieurs cartes et les mets dans la main
     public void DrawMultipleCards(int amountToDraw)
     {
         StartCoroutine(DrawMultipleCo(amountToDraw));
     }
 
+    //Coroutine pour piger les cartes
     IEnumerator DrawMultipleCo(int amountToDraw)
     {
         for(int i =0;i<amountToDraw; i++)

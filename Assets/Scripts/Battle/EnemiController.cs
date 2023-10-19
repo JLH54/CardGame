@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Existe, mais je ne l'utilise pas encore
 public class EnemiController : MonoBehaviour
 {
     public static EnemiController instance;
@@ -28,12 +29,6 @@ public class EnemiController : MonoBehaviour
             enemis.Add(enemy);
         }
         SetEnemiPositions();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void SetEnemiPositions()
