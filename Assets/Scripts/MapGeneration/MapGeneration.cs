@@ -5,25 +5,39 @@ using UnityEngine.UI;
 
 public class MapGeneration : MonoBehaviour
 {
-    public Camera cam;
-    public GameObject nodePrefab;
-    public int numberOfNodes = 10;
-    public float nodeSpacing = 2f;
-    private List<cell> nodes = new List<cell>();
-    public LayerMask whatIsRoom;
-    //Nombre Max des cells qu'il y a a la fin, ils vont etre sois des shop ou rest pour faire sure que le joueur puisse se 'reposer' pour le combat du boss
-    public int maxEndCells = 2;
-    public int currEndCells = 0;
+    //public Camera cam;
+    //public GameObject nodePrefab;
+    //private List<cell> nodes = new List<cell>();
+    //public LayerMask whatIsRoom;
 
-    public int rows = 8;
-    public int columns = 4;
-    public int offsetX = -3;
+    public float radius = 1.0f;
+    public float displayRadius = 1.0f;
+    public Vector2 regionSize = Vector2.one;
+    public int rejectionSamples = 30;
+    List<Vector2> points;
 
-    public int maxShop;
-    public int maxRest;
+    private void OnValidate()
+    {
+        points = PoissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSamples);
+    }
 
-    public int currShop;
-    public int currRest;
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube(regionSize / 2, regionSize);
+        if(points != null)
+        {
+            foreach(Vector2 point in points)
+            {
+                Gizmos.DrawSphere(point, displayRadius);
+            }
+        }
+    }
+
+    //public int maxShop;
+    //public int maxRest;
+
+    //public int currShop;
+    //public int currRest;
 
 
     public enum typeOfRoom {Battle, Shop, Rest, Boss, Starting}
@@ -38,39 +52,39 @@ public class MapGeneration : MonoBehaviour
 
     private void Start()
     {
-        GenerateMap();
+        //GenerateMap();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        //if (Input.GetKeyDown(KeyCode.Mouse0))
+        //{
+        //    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit hit;
 
-            Debug.DrawRay(ray.origin, ray.direction * 10f, Color.red, 5f);
-            if (Physics.Raycast(ray, out hit, 10f, whatIsRoom)){
-                for(int i =0; i < nodes.Count; i++)
-                {
-                    if(hit.collider.gameObject.GetComponent<RoomInfo>().thisCell.obj == nodes[i].obj)
-                    {
-                        Debug.Log("We are entering this room : " + nodes[i].room);
-                    }
-                }
-            }
-        }
+        //    Debug.DrawRay(ray.origin, ray.direction * 10f, Color.red, 5f);
 
+        //    if (Physics.Raycast(ray, out hit, 10f))
+        //    {
+        //        if(hit.collider.GetComponent<RoomInfo>() != null)
+        //        {
+        //            Debug.Log("We hit : " + hit.collider.name);
+        //        }
+        //    }
+        //}
     }
 
     void GenerateMap()
     {
-        GameObject StartNode = Instantiate(nodePrefab, gameObject.transform);
-        cell FirstCell = new cell();
-        FirstCell.obj = StartNode;
-        FirstCell.room = typeOfRoom.Starting;
+        //GameObject StartNode = Instantiate(nodePrefab, gameObject.transform);
+        //cell FirstCell = new cell();
+        //FirstCell.obj = StartNode;
+        //FirstCell.room = typeOfRoom.Starting;
 
-        nodes.Add(FirstCell);
-        for (int j = 1; j < columns; j++) {
+        //nodes.Add(FirstCell);
+
+
+        /*for (int j = 1; j < columns; j++) {
             for(int i = 0; i < rows; i++)
             {
                 if(j == columns && currEndCells <= maxEndCells)
@@ -97,12 +111,12 @@ public class MapGeneration : MonoBehaviour
                     nodes.Add(thisCell);
                 }
             }
-        }
-        GameObject EndNode = Instantiate(nodePrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z + (columns * nodeSpacing)), Quaternion.identity);
-        cell endCell = new cell();
-        endCell.obj = EndNode;
-        endCell.room = typeOfRoom.Boss;
-        nodes.Add(endCell);
+        }*/
+        //GameObject EndNode = Instantiate(nodePrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z + (columns * nodeSpacing)), Quaternion.identity);
+        //cell endCell = new cell();
+        //endCell.obj = EndNode;
+        //endCell.room = typeOfRoom.Boss;
+        //nodes.Add(endCell);
     }
 
     typeOfRoom GetAvailableRoom()
