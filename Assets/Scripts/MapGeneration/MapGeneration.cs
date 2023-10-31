@@ -2,16 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TriangleNet;
-using TriangleNet.Geometry;
+//using TriangleNet;
+//using TriangleNet.Geometry;
 using System.Linq;
+using static UnityEngine.Rendering.DebugUI.Table;
+using UnityEngine.UIElements;
+using static MapGeneration;
 
 public class MapGeneration : MonoBehaviour
 {
     public Camera cam;
     public GameObject nodePrefab;
-    private List<cell> nodes = new List<cell>();
+    //private List<cell> nodes = new List<cell>();
     public LayerMask whatIsRoom;
+    public Vector2 gridSize;
+    public float nodeSpacing = 2f;
+    public int maxEndCells = 2;
+    public int currEndCells = 0;
+    public int offSetX = -3;
+    public int maxShop;
+    public int maxRest;
+    public int currRest;
+    public int currShop;
+    public int numberOfCellsToRemove = 5;
 
     //public float radius = 1.0f;
     //public float displayRadius = 1.0f;
@@ -38,11 +51,6 @@ public class MapGeneration : MonoBehaviour
         //}
     }
 
-    //public int maxShop;
-    //public int maxRest;
-
-    //public int currShop;
-    //public int currRest;
 
 
     public enum typeOfRoom { Battle, Shop, Rest, Boss, Starting }
@@ -50,7 +58,7 @@ public class MapGeneration : MonoBehaviour
     {
         public GameObject obj;
         public typeOfRoom room;
-        public List<GameObject> neighbors;
+        public List<cell> neighbors;
         public int row;
         public int column;
     }
@@ -58,33 +66,42 @@ public class MapGeneration : MonoBehaviour
     private void Start()
     {
         //startPoint = Vector2.zero;
-        //GenerateMap();
+        GenerateMap();
     }
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Mouse0))
-        //{
-        //    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        //    RaycastHit hit;
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
 
-        //    Debug.DrawRay(ray.origin, ray.direction * 10f, Color.red, 5f);
+            Debug.DrawRay(ray.origin, ray.direction * 10f, Color.red, 5f);
 
-        //    if (Physics.Raycast(ray, out hit, 10f))
-        //    {
-        //        if(hit.collider.GetComponent<RoomInfo>() != null)
-        //        {
-        //            Debug.Log("We hit : " + hit.collider.name);
-        //        }
-        //    }
-        //}
+            if (Physics.Raycast(ray, out hit, 10f))
+            {
+                if (hit.collider.GetComponent<RoomInfo>() != null)
+                {
+                    Debug.Log("We hit : " + hit.collider.name);
+                }
+            }
+        }
     }
 
     void GenerateMap()
     {
         //List<Triangle> triangulation = BowyerWatson(points);
+        List<cell> cells = GenerateGrid();
+        List<cell> path = FindPath(cells[0], cells.Find(cell => cell.room ==typeOfRoom.Boss));
 
+        if (path != null)
+        {
+            RemoveRandomCells(cells);
+        }
+        else
+        {
 
+        }
 
     }
 
@@ -106,120 +123,200 @@ public class MapGeneration : MonoBehaviour
         }
     }
 
-
-
-    List<Triangle> BowyerWatson(List<Vector2> pointSet)
+    List<cell> GenerateGrid()
     {
-        float minX = float.MaxValue, minY = float.MaxValue;
-        float maxX = float.MinValue, maxY = float.MinValue;
+        List<cell> nodes = new List<cell>();
 
-        foreach (Vector2 point in pointSet)
+        List<int> nodesTest = new List<int>();
+
+        GameObject StartNode = Instantiate(nodePrefab, gameObject.transform);
+        cell FirstCell = new cell();
+        FirstCell.row = 0;
+        FirstCell.column = 0;
+        FirstCell.obj = StartNode;
+        FirstCell.room = typeOfRoom.Starting;
+        FirstCell.neighbors = new List<cell>();
+        nodes.Add(FirstCell);
+
+        for (int y = 1; y < gridSize.y; y++)
         {
-            minX = Mathf.Min(minX, point.x);
-            minY = Mathf.Min(minY, point.y);
-            maxX = Mathf.Min(maxX, point.x);
-            maxY = Mathf.Min(maxY, point.y);
-        }
-
-        float dx = maxX - minX;
-        float dy = maxY - minY;
-        float deltaMax = Mathf.Max(dx, dy);
-        float midX = (minX + maxX) / 2;
-        float midY = (minY + maxY) / 2;
-
-        Vector2 p0 = new Vector2(midX - 2 * deltaMax, midY - deltaMax);
-        Vector2 p1 = new Vector2(midX, midY + 2 * deltaMax);
-        Vector2 p2 = new Vector2(midX + 2 * deltaMax, midY - deltaMax);
-
-        Triangle superTriangle = new Triangle(p0, p1, p2);
-        List<Triangle> triangulation = new List<Triangle> { superTriangle };
-
-        foreach (Vector2 point in pointSet)
-        {
-            List<Triangle> badTriangles = new List<Triangle>();
-
-            foreach (Triangle triangle in triangulation)
+            for (int x = 0; x < gridSize.x; x++)
             {
-                if (IsPointInsideCircumcircle(point, triangle))
+                if (x == gridSize.x && currEndCells <= maxEndCells)
                 {
-                    badTriangles.Add(triangle);
+                    currEndCells++;
+                    GameObject finalNode = Instantiate(nodePrefab, new Vector3(transform.position.x + (x * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (y * nodeSpacing)), Quaternion.identity);
+                    finalNode.AddComponent<RoomInfo>();
+                    cell finalCell = new cell();
+                    finalCell.obj = finalNode;
+                    finalCell.room = GetRandomEndRoom();
+                    finalCell.column = x;
+                    finalCell.row = y;
+                    finalCell.neighbors = new List<cell>();
+                    finalNode.GetComponent<RoomInfo>().thisCell = finalCell;
+                    nodes.Add(finalCell);
+                }
+                else
+                {
+                    GameObject Node = Instantiate(nodePrefab, new Vector3(transform.position.x + (x * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (y * nodeSpacing)), Quaternion.identity);
+                    Node.AddComponent<RoomInfo>();
+                    cell thisCell = new cell();
+                    thisCell.obj = Node;
+                    thisCell.room = GetAvailableRoom();
+                    thisCell.row = x;
+                    thisCell.column = y;
+                    thisCell.neighbors = new List<cell>();
+                    Node.GetComponent<RoomInfo>().thisCell = thisCell;
+                    nodes.Add(thisCell);
                 }
             }
+        }
+        GameObject EndNode = Instantiate(nodePrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z + (gridSize.y * nodeSpacing)), Quaternion.identity);
+        cell endCell = new cell();
+        endCell.row = (int)gridSize.x;
+        endCell.column = (int)gridSize.y;
+        endCell.obj = EndNode;
+        endCell.room = typeOfRoom.Boss;
+        endCell.neighbors = new List<cell>();
+        nodes.Add(endCell);
 
-            List<Vector2> polygon = GetPolygon(badTriangles);
+        for(int i = 0; i < nodes.Count; i++)
+        {
+            List<cell> neighbors = new List<cell>();
+            cell currentCell = nodes[i];
 
-            foreach (Triangle triangle in badTriangles)
+            foreach (cell cellB in nodes)
             {
-                triangulation.Remove(triangle);
+                if (currentCell.row - cellB.row >= -1 && currentCell.column == cellB.column)
+                {
+                    neighbors.Add(cellB);
+                }else if((currentCell.row - cellB.row >= -1) && ((currentCell.column - 1 == cellB.column) || (currentCell.column + 1 == cellB.column)))
+                {
+                    neighbors.Add(cellB);
+                }
+            }
+            currentCell.neighbors = neighbors;
+            nodes[i] = currentCell;
+        }
+        return nodes;
+    }
+
+    public List<cell> FindPath(cell start, cell goal)
+    {
+        List<cell> openSet = new List<cell>();
+        HashSet<cell> closedSet = new HashSet<cell>();
+        Dictionary<cell, cell> cameFrom = new Dictionary<cell, cell>();
+        Dictionary<cell, float> gScore = new Dictionary<cell, float>();
+        Dictionary<cell, float> fScore = new Dictionary<cell, float>();
+
+        openSet.Add(start);
+        gScore[start] = 0;
+        fScore[start] = Heuristic(start, goal);
+
+        while (openSet.Count > 0)
+        {
+            cell current = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (fScore[openSet[i]] < fScore[current])
+                    current = openSet[i];
             }
 
-            foreach (Vector2 vertex in polygon)
+            if (current.Equals(goal))
             {
-                triangulation.Add(new Triangle(point, vertex, polygon[(polygon.IndexOf(vertex) + 1) % polygon.Count]));
+                return ReconstructPath(cameFrom, current);
+            }
+
+            openSet.Remove(current);
+            closedSet.Add(current);
+
+            //List<cell> neighbors = GetNeighbors(current);
+            foreach (cell neighbor in current.neighbors)
+            {
+                if (closedSet.Contains(neighbor))
+                    continue;
+
+                float tentativeGScore = gScore[current] + DistanceBetween(current, neighbor);
+
+                if (!openSet.Contains(neighbor) || tentativeGScore < gScore[neighbor])
+                {
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = tentativeGScore;
+                    fScore[neighbor] = gScore[neighbor] + Heuristic(neighbor, goal);
+
+                    if (!openSet.Contains(neighbor))
+                        openSet.Add(neighbor);
+                }
+            }
+        }
+        return null;
+    }
+
+    private List<cell> GetNeighbors(cell current)
+    {
+        List<cell> neighbors = new List<cell>();
+        foreach (cell cellB in current.neighbors)
+        {
+            if (Mathf.Abs(current.row - cellB.row) == 1 && current.column == cellB.column)
+            {
+                neighbors.Add(cellB);
+            }
+            else if (Mathf.Abs(current.column - cellB.column) == 1 && current.row == cellB.row)
+            {
+                neighbors.Add(cellB);
             }
         }
 
-        return triangulation.Where(triangle => !triangleContainsAnyVertexOfSuperTriangle(triangle, superTriangle)).ToList();
+        return neighbors;
     }
 
-    bool IsPointInsideCircumcircle(Vector2 point, Triangle triangle)
+    private float Heuristic(cell a, cell b)
     {
-        float ax = triangle.v0.x - point.x;
-        float ay = triangle.v0.y - point.y;
-        float bx = triangle.v1.x - point.x;
-        float by = triangle.v1.y - point.y;
-        float cx = triangle.v2.x - point.x;
-        float cy = triangle.v2.y - point.y;
+        return Mathf.Abs(a.row - b.row) + Mathf.Abs(a.column - b.column);
+    }
 
-        float d = (ax * (by - cy)) + (bx * (cy - ay)) + (cx * (ay - by));
+    private float DistanceBetween(cell a, cell b)
+    {
+        return 1;
+    }
 
-        if (d > 0)
+    private List<cell> ReconstructPath(Dictionary<cell, cell> cameFrom, cell current)
+    {
+        List<cell> path = new List<cell>();
+        while (cameFrom.ContainsKey(current))
         {
-            return false;
+            path.Insert(0, current);
+            current = cameFrom[current];
         }
-
-        float e = (ax * ax + ay * ay) * (cy - by) + (bx * bx + by * by) * (ax - cx) + (cx * cx + cy * cy) * (by - ay);
-
-        return e > 0;
+        return path;
     }
 
-    List<Vector2> GetPolygon(List<Triangle> triangles)
+    private void RemoveRandomCells(List<cell> cells)
     {
-        List<Vector2> polygon = new List<Vector2>();
-
-        foreach(Triangle triangle in triangles)
+        for(int i = 0; i < numberOfCellsToRemove; i++)
         {
-            polygon.Add(triangle.v0);
-            polygon.Add(triangle.v1);
-            polygon.Add(triangle.v2);
+            int randomIndex = Random.Range(1, cells.Count);
+            cell cellToRemove = cells[randomIndex];
+
+            RemoveCell(cells, cellToRemove);
+
+            List<cell> path = FindPath(cells[0], cells.Find(cell => cell.room == typeOfRoom.Boss));
+            if(path == null)
+            {
+                RestoreCell(cells,cellToRemove);
+            }
         }
-
-        return polygon.Distinct().ToList();
     }
 
-    bool triangleContainsAnyVertexOfSuperTriangle(Triangle triangle, Triangle superTriangle)
+    private void RemoveCell(List<cell> cells,cell cellToRemove)
     {
-        return superTriangleContainsPoint(triangle.v0, superTriangle) || superTriangleContainsPoint(triangle.v1, superTriangle) || superTriangleContainsPoint(triangle.v2, superTriangle);
+        cells.Remove(cellToRemove);
+        Destroy(cellToRemove.obj);
     }
 
-    bool superTriangleContainsPoint(Vector2 point, Triangle superTriangle)
+    private void RestoreCell(List<cell> cells,cell cellToRestore)
     {
-        return point.x >= Mathf.Min(superTriangle.v0.x, superTriangle.v1.x, superTriangle.v2.x) &&
-            point.x <= Mathf.Min(superTriangle.v0.x, superTriangle.v1.x, superTriangle.v2.x) &&
-            point.y >= Mathf.Min(superTriangle.v0.y, superTriangle.v1.y, superTriangle.v2.y) &&
-            point.x <= Mathf.Min(superTriangle.v0.y, superTriangle.v1.y, superTriangle.v2.y);
-    }
-}
-
-
-class Triangle
-{
-    public Vector2 v0, v1, v2;
-
-    public Triangle(Vector2 v0, Vector2 v1, Vector2 v2)
-    {
-        this.v0 = v0;
-        this.v1 = v1;
-        this.v2 = v2;
+        cells.Add(cellToRestore);
+        Instantiate(nodePrefab, new Vector3(transform.position.x + (cellToRestore.row * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (cellToRestore.column * nodeSpacing)), Quaternion.identity);
     }
 }
