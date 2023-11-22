@@ -2,18 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-//using TriangleNet;
-//using TriangleNet.Geometry;
-using System.Linq;
-using static UnityEngine.Rendering.DebugUI.Table;
-using UnityEngine.UIElements;
-using static MapGeneration;
 
 public class MapGeneration : MonoBehaviour
 {
+    public static MapGeneration instance;
     public Camera cam;
     public GameObject nodePrefab;
-    //private List<cell> nodes = new List<cell>();
     public LayerMask whatIsRoom;
     public Vector2 gridSize;
     public float nodeSpacing = 2f;
@@ -26,34 +20,23 @@ public class MapGeneration : MonoBehaviour
     public int currShop;
     public int numberOfCellsToRemove = 5;
 
-    //public float radius = 1.0f;
-    //public float displayRadius = 1.0f;
-    //public Vector2 regionSize = Vector2.one;
-    //public int rejectionSamples = 30;
-    //List<Vector2> points;
-
-    //public Vector2 startPoint;
-
-    private void OnValidate()
-    {
-        //points = PoissonDiscSampling.GeneratePoints(radius, regionSize, rejectionSamples);
-    }
-
-    private void OnDrawGizmos()
-    {
-        //Gizmos.DrawWireCube(regionSize / 2, regionSize);
-        //if (points != null)
-        //{
-        //    foreach (Vector2 point in points)
-        //    {
-        //        Gizmos.DrawSphere(point, displayRadius);
-        //    }
-        //}
-    }
+    public Material lineMAT;
+    public float lineThickness = 10f;
+    public float overrideLineThickness = -1f;
+    public float EndLineThickness => overrideLineThickness > -1f ? overrideLineThickness : lineThickness;
+    public Color startColor = Color.white;
+    public Color endColor = Color.black;
 
 
 
-    public enum typeOfRoom { Battle, Shop, Rest, Boss, Starting }
+    private GameObject currObj;
+    private GameObject selection;
+    private LineRenderer mainLineRenderer;
+    private List<LineRenderer> links = new List<LineRenderer>();
+    private bool canGoInRoom = false;
+    private List<cell> cells;
+
+    public enum typeOfRoom { Battle, Event,Shop, Rest, Boss, Starting }
     public struct cell
     {
         public GameObject obj;
@@ -61,72 +44,139 @@ public class MapGeneration : MonoBehaviour
         public List<cell> neighbors;
         public int row;
         public int column;
+        public bool selected;
+        public bool isOn;
+        public int index;
+    }
+
+    private void Awake()
+    {
+        instance = this;
     }
 
     private void Start()
     {
-        //startPoint = Vector2.zero;
         GenerateMap();
+        currObj = cells[0].obj.GetComponentInChildren<RoomInfo>().roomGO;
+        ShowLinks();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        Debug.DrawRay(ray.origin, ray.direction * 10f, Color.red, 0.1f);
+        if (Physics.Raycast(ray, out hit, 10f))
         {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            Debug.DrawRay(ray.origin, ray.direction * 10f, Color.red, 5f);
-
+            RoomInfo clickedInfo = hit.collider.GetComponent<RoomInfo>();
+            if (clickedInfo != null)
+            {
+                if (currObj.GetComponent<RoomInfo>().thisCell.neighbors.Contains(clickedInfo.thisCell))
+                {
+                    canGoInRoom = true;
+                    //Debug.Log("We hit : " + hit.collider.GetComponentInChildren<RoomInfo>().room);
+                    clickedInfo.Hover();
+                    selection = clickedInfo.gameObject;
+                }
+            }
+            else
+            {
+                canGoInRoom = false;
+                if (selection == null) return;
+                selection.GetComponentInChildren<RoomInfo>().StopHover();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse0) && canGoInRoom)
+        {
             if (Physics.Raycast(ray, out hit, 10f))
             {
-                if (hit.collider.GetComponent<RoomInfo>() != null)
+                RoomInfo clickedInfo = hit.collider.GetComponent<RoomInfo>();
+                if (clickedInfo != null)
                 {
-                    Debug.Log("We hit : " + hit.collider.name);
+                    for (int i = 0; i < links.Count; i++)
+                    {
+                        if (i != clickedInfo.thisCell.index)
+                        {
+                            Destroy(links[i]);
+                        }
+                    }
+                    currObj = hit.collider.GetComponent<RoomInfo>().gameObject;
+                    hit.collider.GetComponent<RoomInfo>().Selected();
                 }
             }
         }
     }
 
+    public void ShowLinks()
+    {
+        links.Clear();
+        int myIndex = 0;
+        for (int i =0; i < currObj.GetComponent<RoomInfo>().thisCell.neighbors.Count; i++)
+        {
+            cell thisCell = currObj.GetComponent<RoomInfo>().thisCell.neighbors[i];
+            thisCell.index = myIndex;
+            cells[i] = thisCell;
+            cells[i].obj.GetComponentInChildren<RoomInfo>().thisCell = thisCell;
+            currObj.GetComponent<RoomInfo>().thisCell.neighbors[i] = thisCell;
+            GameObject linkGO = new GameObject();
+            LineRenderer link = linkGO.AddComponent<LineRenderer>();
+            link.SetPositions(new Vector3[]{ currObj.transform.position, currObj.GetComponent<RoomInfo>().thisCell.neighbors[i].obj.transform.position});
+            link.textureMode = LineTextureMode.Tile;
+            link.material = lineMAT;
+            link.alignment = LineAlignment.View;
+            link.startWidth = lineThickness;
+            link.endWidth = EndLineThickness;
+            link.startColor = startColor;
+            link.endColor = endColor;
+            links.Add(link);
+            ++myIndex;
+        }
+    }
+
     void GenerateMap()
     {
-        //List<Triangle> triangulation = BowyerWatson(points);
-        List<cell> cells = GenerateGrid();
-        List<cell> path = FindPath(cells[0], cells.Find(cell => cell.room ==typeOfRoom.Boss));
+        cells = GenerateGrid();
+    }
 
-        if (path != null)
+    typeOfRoom GetAvailableRoom(int currentRow, int totalRow)
+    {
+        if(currentRow == totalRow - 1)
         {
-            RemoveRandomCells(cells);
+            int randomNumber = Random.Range(0, 101);
+            if(randomNumber <= 50)
+            {
+                return typeOfRoom.Rest;
+            }
+            else
+            {
+                return typeOfRoom.Shop;
+            }
         }
         else
         {
-
-        }
-
-    }
-
-    typeOfRoom GetAvailableRoom()
-    {
-        return typeOfRoom.Battle;
-    }
-
-    typeOfRoom GetRandomEndRoom()
-    {
-        int randomNumber = Random.Range(0, 101);
-        if (randomNumber <= 50)
-        {
-            return typeOfRoom.Rest;
-        }
-        else
-        {
-            return typeOfRoom.Shop;
+            int randomNumber = Random.Range(0, 101);
+            if(randomNumber <= 50)
+            {
+                return typeOfRoom.Battle;
+            }
+            else if(randomNumber <= 80)
+            {
+                return typeOfRoom.Event;
+            }
+            else if(randomNumber <= 90)
+            {
+                return typeOfRoom.Shop;
+            }
+            else
+            {
+                return typeOfRoom.Rest;
+            }
         }
     }
 
     List<cell> GenerateGrid()
     {
         List<cell> nodes = new List<cell>();
-
         List<int> nodesTest = new List<int>();
 
         GameObject StartNode = Instantiate(nodePrefab, gameObject.transform);
@@ -136,187 +186,76 @@ public class MapGeneration : MonoBehaviour
         FirstCell.obj = StartNode;
         FirstCell.room = typeOfRoom.Starting;
         FirstCell.neighbors = new List<cell>();
+        FirstCell.selected = true;
+        FirstCell.isOn = true;
+        StartNode.GetComponentInChildren<RoomInfo>().thisCell = FirstCell;
+        StartNode.GetComponentInChildren<RoomInfo>().show();
         nodes.Add(FirstCell);
-
         for (int y = 1; y < gridSize.y; y++)
         {
             for (int x = 0; x < gridSize.x; x++)
             {
-                if (x == gridSize.x && currEndCells <= maxEndCells)
-                {
-                    currEndCells++;
-                    GameObject finalNode = Instantiate(nodePrefab, new Vector3(transform.position.x + (x * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (y * nodeSpacing)), Quaternion.identity);
-                    finalNode.AddComponent<RoomInfo>();
-                    cell finalCell = new cell();
-                    finalCell.obj = finalNode;
-                    finalCell.room = GetRandomEndRoom();
-                    finalCell.column = x;
-                    finalCell.row = y;
-                    finalCell.neighbors = new List<cell>();
-                    finalNode.GetComponent<RoomInfo>().thisCell = finalCell;
-                    nodes.Add(finalCell);
-                }
-                else
-                {
-                    GameObject Node = Instantiate(nodePrefab, new Vector3(transform.position.x + (x * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (y * nodeSpacing)), Quaternion.identity);
-                    Node.AddComponent<RoomInfo>();
-                    cell thisCell = new cell();
-                    thisCell.obj = Node;
-                    thisCell.room = GetAvailableRoom();
-                    thisCell.row = x;
-                    thisCell.column = y;
-                    thisCell.neighbors = new List<cell>();
-                    Node.GetComponent<RoomInfo>().thisCell = thisCell;
-                    nodes.Add(thisCell);
-                }
+
+                GameObject Node = Instantiate(nodePrefab, new Vector3(transform.position.x + (x * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (y * nodeSpacing)), Quaternion.identity);
+                cell thisCell = new cell();
+                thisCell.obj = Node;
+                thisCell.room = GetAvailableRoom(y, (int)gridSize.y);
+                thisCell.row = x;
+                thisCell.column = y;
+                thisCell.neighbors = new List<cell>();
+                Node.GetComponentInChildren<RoomInfo>().thisCell = thisCell;
+                Node.GetComponentInChildren<RoomInfo>().show();
+                nodes.Add(thisCell);
             }
         }
+
         GameObject EndNode = Instantiate(nodePrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z + (gridSize.y * nodeSpacing)), Quaternion.identity);
         cell endCell = new cell();
-        endCell.row = (int)gridSize.x;
+        endCell.row = 0;
         endCell.column = (int)gridSize.y;
         endCell.obj = EndNode;
         endCell.room = typeOfRoom.Boss;
         endCell.neighbors = new List<cell>();
+        EndNode.GetComponentInChildren<RoomInfo>().thisCell = endCell;
+        EndNode.GetComponentInChildren<RoomInfo>().show();
         nodes.Add(endCell);
 
+        //Met les voisins(Haut gauche, Haut milieu, Haut droit)
         for(int i = 0; i < nodes.Count; i++)
         {
-            List<cell> neighbors = new List<cell>();
-            cell currentCell = nodes[i];
-
             foreach (cell cellB in nodes)
             {
-                if (currentCell.row - cellB.row >= -1 && currentCell.column == cellB.column)
+                //Check for the first node
+                if(nodes[i].room == typeOfRoom.Starting)
                 {
-                    neighbors.Add(cellB);
-                }else if((currentCell.row - cellB.row >= -1) && ((currentCell.column - 1 == cellB.column) || (currentCell.column + 1 == cellB.column)))
+                    foreach(cell cellA in nodes)
+                    {
+                        if(cellA.column == 1)
+                        {
+                            
+                            nodes[i].neighbors.Add(cellA);
+                        }
+                        if(nodes[i].neighbors.Count >= gridSize.x)
+                        {
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //Check for boss room
+                else if(nodes[i].column == gridSize.y - 1)
                 {
-                    neighbors.Add(cellB);
+                    nodes[i].neighbors.Add(nodes[nodes.Count - 1]);
+                }
+                //Check for the cell above it
+                else if((cellB.column == nodes[i].column + 1 && cellB.row == nodes[i].row) ||
+                    cellB.column == nodes[i].column + 1 && cellB.row == nodes[i].row + 1 ||
+                    cellB.column == nodes[i].column + 1 && cellB.row == nodes[i].row - 1)
+                {
+                    nodes[i].neighbors.Add(cellB);
                 }
             }
-            currentCell.neighbors = neighbors;
-            nodes[i] = currentCell;
         }
         return nodes;
-    }
-
-    public List<cell> FindPath(cell start, cell goal)
-    {
-        List<cell> openSet = new List<cell>();
-        HashSet<cell> closedSet = new HashSet<cell>();
-        Dictionary<cell, cell> cameFrom = new Dictionary<cell, cell>();
-        Dictionary<cell, float> gScore = new Dictionary<cell, float>();
-        Dictionary<cell, float> fScore = new Dictionary<cell, float>();
-
-        openSet.Add(start);
-        gScore[start] = 0;
-        fScore[start] = Heuristic(start, goal);
-
-        while (openSet.Count > 0)
-        {
-            cell current = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (fScore[openSet[i]] < fScore[current])
-                    current = openSet[i];
-            }
-
-            if (current.Equals(goal))
-            {
-                return ReconstructPath(cameFrom, current);
-            }
-
-            openSet.Remove(current);
-            closedSet.Add(current);
-
-            //List<cell> neighbors = GetNeighbors(current);
-            foreach (cell neighbor in current.neighbors)
-            {
-                if (closedSet.Contains(neighbor))
-                    continue;
-
-                float tentativeGScore = gScore[current] + DistanceBetween(current, neighbor);
-
-                if (!openSet.Contains(neighbor) || tentativeGScore < gScore[neighbor])
-                {
-                    cameFrom[neighbor] = current;
-                    gScore[neighbor] = tentativeGScore;
-                    fScore[neighbor] = gScore[neighbor] + Heuristic(neighbor, goal);
-
-                    if (!openSet.Contains(neighbor))
-                        openSet.Add(neighbor);
-                }
-            }
-        }
-        return null;
-    }
-
-    private List<cell> GetNeighbors(cell current)
-    {
-        List<cell> neighbors = new List<cell>();
-        foreach (cell cellB in current.neighbors)
-        {
-            if (Mathf.Abs(current.row - cellB.row) == 1 && current.column == cellB.column)
-            {
-                neighbors.Add(cellB);
-            }
-            else if (Mathf.Abs(current.column - cellB.column) == 1 && current.row == cellB.row)
-            {
-                neighbors.Add(cellB);
-            }
-        }
-
-        return neighbors;
-    }
-
-    private float Heuristic(cell a, cell b)
-    {
-        return Mathf.Abs(a.row - b.row) + Mathf.Abs(a.column - b.column);
-    }
-
-    private float DistanceBetween(cell a, cell b)
-    {
-        return 1;
-    }
-
-    private List<cell> ReconstructPath(Dictionary<cell, cell> cameFrom, cell current)
-    {
-        List<cell> path = new List<cell>();
-        while (cameFrom.ContainsKey(current))
-        {
-            path.Insert(0, current);
-            current = cameFrom[current];
-        }
-        return path;
-    }
-
-    private void RemoveRandomCells(List<cell> cells)
-    {
-        for(int i = 0; i < numberOfCellsToRemove; i++)
-        {
-            int randomIndex = Random.Range(1, cells.Count);
-            cell cellToRemove = cells[randomIndex];
-
-            RemoveCell(cells, cellToRemove);
-
-            List<cell> path = FindPath(cells[0], cells.Find(cell => cell.room == typeOfRoom.Boss));
-            if(path == null)
-            {
-                RestoreCell(cells,cellToRemove);
-            }
-        }
-    }
-
-    private void RemoveCell(List<cell> cells,cell cellToRemove)
-    {
-        cells.Remove(cellToRemove);
-        Destroy(cellToRemove.obj);
-    }
-
-    private void RestoreCell(List<cell> cells,cell cellToRestore)
-    {
-        cells.Add(cellToRestore);
-        Instantiate(nodePrefab, new Vector3(transform.position.x + (cellToRestore.row * nodeSpacing) + offSetX, transform.position.y, transform.position.z + (cellToRestore.column * nodeSpacing)), Quaternion.identity);
     }
 }
