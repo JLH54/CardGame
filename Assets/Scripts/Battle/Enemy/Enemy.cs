@@ -118,6 +118,7 @@ public class Enemy : MonoBehaviour
 
     public void Attack()
     {
+        if (isDead) return;
         if (action == null) SetAttack();
         List<GameObject> targets = new List<GameObject>();
         targets.Add(gameObject);

@@ -504,6 +504,11 @@ MonoBehaviour:
   currRest: 0
   currShop: 0
   numberOfCellsToRemove: 5
+  lineMAT: {fileID: 2100000, guid: ed54f56dce229a64f92f3e73d1bfb797, type: 2}
+  lineThickness: 0.5
+  overrideLineThickness: -1
+  startColor: {r: 1, g: 1, b: 1, a: 1}
+  endColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1075948886
 GameObject:
   m_ObjectHideFlags: 0
